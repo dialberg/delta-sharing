@@ -47,6 +47,11 @@ table_url = profile_file + "#delta_sharing.default.owid-covid-data"
 # Create Spark with delta sharing connector
 from pyspark.sql import SparkSession
 
+my_c_cnc_p = os.getcwd() + r'\delta-sharing\client\target\scala-2.12'
+my_c_cnc_n = 'delta-sharing-client_2.12-1.0.0-SNAPSHOT.jar'
+my_c_cnc_p = os.path.join(my_c_cnc_p, my_c_cnc_n)
+print('MY JAR EXISTS? : {}'.format(os.path.isfile(my_c_cnc_p)))
+
 my_cnc_p = os.getcwd() + r'\delta-sharing\spark\target\scala-2.12'
 my_cnc_n = 'delta-sharing-spark_2.12-1.0.0-SNAPSHOT.jar'
 my_cnc_p = os.path.join(my_cnc_p, my_cnc_n)
@@ -60,12 +65,12 @@ def_cnc_p = os.getcwd() + r'\delta-sharing\examples'
 def_cnc_p = os.path.join(def_cnc_p, 'io.delta_delta-sharing-spark_2.12-0.6.4.jar')
 print('DEF JAR EXISTS? : {}'.format(os.path.isfile(def_cnc_p)))
 
-c = def_cnc_p
+c = my_cnc_p + ',' + my_c_cnc_p
 
 spark = SparkSession.builder \
 	.appName("delta-sharing-demo") \
 	.master("local[*]") \
-    .config('spark.jars',c)\
+    .config('spark.jars', c)\
 	.getOrCreate()
 
 # Read data using format "deltaSharing"
